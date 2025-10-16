@@ -1,14 +1,26 @@
+import 'package:hive/hive.dart';
+import 'package:uuid/uuid.dart';
+part 'note.g.dart';
+
+@HiveType(typeId: 0)
 class Note {
-  String id;
+  @HiveField(0)
+  late String uuid;
+  @HiveField(1)
   String title;
+  @HiveField(2)
   List<NoteContent> content;
+  @HiveField(3)
   String color;
+  @HiveField(4)
   bool pinned;
+  @HiveField(5)
   DateTime createdAt;
+  @HiveField(6)
   DateTime updatedAt;
 
   Note({
-    required this.id,
+    required this.uuid,
     required this.title,
     required this.content,
     this.color = '0xFFE5E5E5',
@@ -17,23 +29,45 @@ class Note {
     required this.updatedAt,
   });
 
+  Note copyWith({
+    String? uuid,
+    String? title,
+    List<NoteContent>? content,
+    String? color,
+    bool? pinned,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+  }) {
+    return Note(
+      uuid: uuid ?? this.uuid,
+      title: title ?? this.title,
+      content: content ?? this.content,
+      color: color ?? this.color,
+      pinned: pinned ?? this.pinned,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+    );
+  }
+
   // Factory constructor to create Note From Json
   factory Note.fromJson(Map<String, dynamic> json) {
     return Note(
-      id: json['id'],
+      uuid: json['uuid'] ?? const Uuid().v4(),
       title: json['title'] ?? '',
       content: (json['content'] as List<dynamic>)
           .map((e) => NoteContent.fromJson(e))
           .toList(),
-      createdAt: DateTime.parse(json['createdAt']),
-      updatedAt: DateTime.parse(json['updatedAt']),
+      color: json['color'] ?? '0xFFE5E5E5',
+      pinned: json['pinned'] ?? false,
+      createdAt: DateTime.tryParse(json['createdAt']) ?? DateTime.now(),
+      updatedAt: DateTime.tryParse(json['updatedAt']) ?? DateTime.now(),
     );
   }
 
   // Convert Note to Json
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
+      'uuid': uuid,
       'title': title,
       'content': content.map((e) => e.toJson()).toList(),
       'color': color,
@@ -45,36 +79,39 @@ class Note {
 
   // Utility: for new Empty Note
   factory Note.empty() {
+    final now = DateTime.now();
     return Note(
-      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      uuid: const Uuid().v4(),
       title: '',
       content: [],
-      createdAt: DateTime.now(),
-      updatedAt: DateTime.now(),
+      color: '0xFFE5E5E5',
+      pinned: false,
+      createdAt: now,
+      updatedAt: now,
     );
   }
 }
 
 // Representation one element in note content (text or checkbox or image)
+@HiveType(typeId: 1)
 class NoteContent {
-  final String type;
+  @HiveField(0)
+  final String? type;
+  @HiveField(1)
   String? value; // for text
+  @HiveField(2)
   String? label; // for checkbox
+  @HiveField(3)
   bool? checked; // for checkbox
+  @HiveField(4)
   String? url; // for image
 
-  NoteContent({
-    required this.type,
-    this.value,
-    this.label,
-    this.checked,
-    this.url,
-  });
+  NoteContent({this.type, this.value, this.label, this.checked, this.url});
 
   // Factory constructor to create NoteContent From Json
   factory NoteContent.fromJson(Map<String, dynamic> json) {
     return NoteContent(
-      type: json['type'],
+      type: json['type'] ?? 'text',
       value: json['value'],
       label: json['label'],
       checked: json['checked'],

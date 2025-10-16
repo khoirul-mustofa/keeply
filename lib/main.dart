@@ -1,7 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/adapters.dart';
+import 'package:note_keep/models/note.dart';
+import 'package:note_keep/pages/editor_page.dart';
 import 'package:note_keep/pages/home_page.dart';
+import 'package:note_keep/services/hive_service.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  // Init Hive
+  await Hive.initFlutter();
+
+  // Register adapter
+  Hive.registerAdapter(NoteAdapter());
+  Hive.registerAdapter(NoteContentAdapter());
+
+  // Buka box sebelum app dijalankan
+  await HiveService().init();
   runApp(MyApp());
 }
 
@@ -18,7 +32,11 @@ class MyApp extends StatelessWidget {
         primaryColor: Colors.white,
         scaffoldBackgroundColor: Colors.white,
       ),
-      home: HomePage(),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => const HomePage(),
+        '/editor': (context) => const EditorPage(),
+      },
     );
   }
 }
