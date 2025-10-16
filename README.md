@@ -57,6 +57,20 @@ lib/
 
 ---
 
+## 📱 Tampilan Aplikasi
+
+Berikut beberapa tampilan dari aplikasi **Keeply**:
+
+<p align="center">
+  <img src="https://github.com/khoirul-mustofa/keeply/assets/screenshots/home.png" width="280"/>
+  <img src="https://github.com/khoirul-mustofa/keeply/assets/screenshots/editor.png" width="280"/>
+  <img src="https://github.com/khoirul-mustofa/keeply/assets/screenshots/search.png" width="280"/>
+</p>
+
+
+---
+
+
 ## Rencana Pengembangan
 
 * Tambah mode gelap.
