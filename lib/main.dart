@@ -28,10 +28,24 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Note Keep',
       debugShowCheckedModeBanner: false,
+
       theme: ThemeData(
         useMaterial3: true,
         primaryColor: Colors.white,
         scaffoldBackgroundColor: Colors.white,
+        dialogTheme: DialogThemeData(
+          backgroundColor: Colors.white,
+          surfaceTintColor: Colors.transparent,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(16)),
+          ),
+          titleTextStyle: TextStyle(
+            color: Colors.black87,
+            fontWeight: FontWeight.w600,
+            fontSize: 18,
+          ),
+          contentTextStyle: TextStyle(color: Colors.black87, fontSize: 15),
+        ),
       ),
       initialRoute: '/',
       routes: {

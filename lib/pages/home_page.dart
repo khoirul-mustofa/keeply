@@ -75,6 +75,32 @@ class _HomePageState extends State<HomePage> {
                 itemBuilder: (context, index) {
                   final note = notes[index];
                   return GestureDetector(
+                    onLongPress: () {
+                      showDialog(
+                        context: context,
+                        builder: (ctx) {
+                          return AlertDialog(
+                            title: const Text('Hapus catatan?'),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.pop(ctx);
+                                },
+                                child: const Text('Batal'),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  hive.delete(note.uuid);
+                                  Navigator.pop(ctx);
+                                  _refreshNotes();
+                                },
+                                child: const Text('Hapus'),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    },
                     onTap: () {
                       Navigator.pushNamed(
                         context,

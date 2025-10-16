@@ -14,6 +14,7 @@ class _EditorPageState extends State<EditorPage> {
   final hive = HiveService();
   final titleController = TextEditingController();
   final contentController = TextEditingController();
+  final FocusNode _contentFocusNode = FocusNode();
 
   Note? note;
   bool isDeleted = false;
@@ -26,25 +27,39 @@ class _EditorPageState extends State<EditorPage> {
   bool isCheckboxMode = false;
   List<CheckboxItem> checkboxItems = [];
 
-  // Google Keep color palette
   final List<Map<String, dynamic>> colorPalette = [
-    {'name': 'Default', 'hex': '0xFFFFFFFF'},
-    {'name': 'Red', 'hex': '0xFFF28B82'},
-    {'name': 'Orange', 'hex': '0xFFFBBC04'},
-    {'name': 'Yellow', 'hex': '0xFFFFF475'},
-    {'name': 'Green', 'hex': '0xFFCCFF90'},
-    {'name': 'Teal', 'hex': '0xFFA7FFEB'},
-    {'name': 'Blue', 'hex': '0xFFCBF0F8'},
-    {'name': 'Dark Blue', 'hex': '0xFFAECBFA'},
-    {'name': 'Purple', 'hex': '0xFFD7AEFB'},
-    {'name': 'Pink', 'hex': '0xFFFDCFE8'},
-    {'name': 'Brown', 'hex': '0xFFE6C9A8'},
-    {'name': 'Gray', 'hex': '0xFFE8EAED'},
+    {'name': 'Default', 'hex': '0xFFFFFFFF'}, // Putih bersih
+    {'name': 'Rose', 'hex': '0xFFFFEBEE'}, // Pink muda lembut
+    {'name': 'Blush', 'hex': '0xFFFFF0F5'}, // Pink pastel
+    {'name': 'Peach', 'hex': '0xFFFFF3E0'}, // Oranye pastel
+    {'name': 'Apricot', 'hex': '0xFFFFE0B2'}, // Peach creamy
+    {'name': 'Lemon', 'hex': '0xFFFFF9C4'}, // Kuning lembut
+    {'name': 'Butter', 'hex': '0xFFFFFDE7'}, // Kuning pucat
+    {'name': 'Mint', 'hex': '0xFFE0F7FA'}, // Hijau kebiruan lembut
+    {'name': 'Aqua', 'hex': '0xFFE1F5FE'}, // Biru muda segar
+    {'name': 'Sky', 'hex': '0xFFB3E5FC'}, // Biru langit pastel
+    {'name': 'Cerulean', 'hex': '0xFFBBDEFB'}, // Biru lembut natural
+    {'name': 'Lilac', 'hex': '0xFFF3E5F5'}, // Ungu pastel muda
+    {'name': 'Lavender', 'hex': '0xFFEDE7F6'}, // Ungu keabu-abuan
+    {'name': 'Periwinkle', 'hex': '0xFFC5CAE9'}, // Ungu kebiruan lembut
+    {'name': 'Mauve', 'hex': '0xFFF8BBD0'}, // Ungu pink pastel
+    {'name': 'Sage', 'hex': '0xFFE8F5E9'}, // Hijau lembut alami
+    {'name': 'Tea Green', 'hex': '0xFFD0F8CE'}, // Hijau pastel cerah
+    {'name': 'Sand', 'hex': '0xFFFFF8E1'}, // Krem muda alami
+    {'name': 'Latte', 'hex': '0xFFFFECB3'}, // Cokelat susu lembut
+    {'name': 'Mist', 'hex': '0xFFE8EAF6'}, // Biru keabu lembut
+    {'name': 'Ash', 'hex': '0xFFF5F5F5'}, // Abu netral
+    {'name': 'Pebble', 'hex': '0xFFEEEEEE'}, // Abu terang lembut
+    {'name': 'Cloud', 'hex': '0xFFE0E0E0'}, // Abu keperakan natural
   ];
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+    // Focus after the widget is successfully rendered
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _contentFocusNode.requestFocus();
+    });
     if (!_isDataInitialized) {
       final args =
           ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
@@ -87,9 +102,7 @@ class _EditorPageState extends State<EditorPage> {
   void saveNote() {
     final now = DateTime.now();
     final title = titleController.text.trim();
-
     List<NoteContent> noteContents = [];
-
     if (isCheckboxMode) {
       // Save checkbox items
       if (title.isEmpty && checkboxItems.isEmpty) {
@@ -107,7 +120,10 @@ class _EditorPageState extends State<EditorPage> {
     } else {
       // Save text content
       final content = contentController.text.trim();
-
+      if (title.isEmpty && content.isEmpty && note?.uuid != null) {
+        hive.delete(note!.uuid);
+        isDeleted = true;
+      }
       if (title.isEmpty && content.isEmpty) {
         return;
       }
@@ -275,6 +291,7 @@ class _EditorPageState extends State<EditorPage> {
     for (var item in checkboxItems) {
       item.dispose();
     }
+    _contentFocusNode.dispose();
     super.dispose();
   }
 
@@ -352,6 +369,7 @@ class _EditorPageState extends State<EditorPage> {
                       if (!isCheckboxMode)
                         TextField(
                           controller: contentController,
+                          focusNode: _contentFocusNode,
                           maxLines: null,
                           keyboardType: TextInputType.multiline,
                           style: const TextStyle(fontSize: 16),
