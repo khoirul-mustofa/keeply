@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/adapters.dart';
-import 'package:note_keep/models/note.dart';
-import 'package:note_keep/pages/editor_page.dart';
-import 'package:note_keep/pages/home_page.dart';
-import 'package:note_keep/pages/keep_search_page.dart';
-import 'package:note_keep/services/hive_service.dart';
+import 'package:keeply/models/note.dart';
+import 'package:keeply/pages/editor_page.dart';
+import 'package:keeply/pages/home_page.dart';
+import 'package:keeply/pages/keep_search_page.dart';
+import 'package:keeply/services/hive_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

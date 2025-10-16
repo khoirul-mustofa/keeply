@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:note_keep/models/note.dart';
-import 'package:note_keep/services/hive_service.dart';
+import 'package:keeply/models/note.dart';
+import 'package:keeply/services/hive_service.dart';
 import 'package:uuid/uuid.dart';
 
 class EditorPage extends StatefulWidget {
