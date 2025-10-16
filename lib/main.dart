@@ -3,6 +3,7 @@ import 'package:hive_flutter/adapters.dart';
 import 'package:note_keep/models/note.dart';
 import 'package:note_keep/pages/editor_page.dart';
 import 'package:note_keep/pages/home_page.dart';
+import 'package:note_keep/pages/keep_search_page.dart';
 import 'package:note_keep/services/hive_service.dart';
 
 void main() async {
@@ -36,6 +37,7 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (context) => const HomePage(),
         '/editor': (context) => const EditorPage(),
+        '/search': (context) => const KeepSearchPage(),
       },
     );
   }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:note_keep/models/note.dart';
 import 'package:note_keep/services/hive_service.dart';
+import 'package:note_keep/widgets/home_app_bar_search_box_widget.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -13,7 +14,6 @@ class _HomePageState extends State<HomePage> {
   List<Note> notes = [];
   final hive = HiveService();
 
-  // Get notes from Hive
   Future<void> _getNotes() async {
     notes.clear();
     notes = hive.getAll();
@@ -26,7 +26,6 @@ class _HomePageState extends State<HomePage> {
     _getNotes();
   }
 
-  // Refresh notes
   void _refreshNotes() {
     setState(() {
       _getNotes();
@@ -37,8 +36,8 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.black,
-        foregroundColor: Colors.white,
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black,
         onPressed: () {
           Navigator.pushNamed(
             context,
@@ -51,44 +50,44 @@ class _HomePageState extends State<HomePage> {
         child: const Icon(Icons.add),
       ),
       appBar: AppBar(
-        backgroundColor: Colors.black,
-        foregroundColor: Colors.white,
-        actions: [
-          // Refresh
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: () {
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black,
+        title: HomeAppBarSearchBoxWidget(
+          onTap: () {
+            Navigator.pushNamed(context, '/search').then((_) {
               _refreshNotes();
-            },
-          ),
-          // Delete all notes
-          IconButton(
-            icon: const Icon(Icons.delete_outline),
-            onPressed: () {
-              hive.clear();
-              _refreshNotes();
-            },
-          ),
-        ],
+            });
+          },
+        ),
       ),
-      body: ListView.builder(
-        itemCount: notes.length,
-        padding: const EdgeInsets.all(12),
-        itemBuilder: (context, index) {
-          final note = notes[index];
-          return GestureDetector(
-            onTap: () {
-              Navigator.pushNamed(
-                context,
-                '/editor',
-                arguments: {'isEdit': true, 'note': note},
-              ).then((_) {
-                _refreshNotes();
-              });
-            },
-            child: _buildNoteCard(note),
-          );
+      body: RefreshIndicator(
+        color: Colors.black,
+        backgroundColor: Colors.white,
+        onRefresh: () async {
+          await Future.delayed(const Duration(milliseconds: 500));
+          _refreshNotes();
         },
+        child: notes.isEmpty
+            ? const Center(child: Text('Tidak ada catatan'))
+            : ListView.builder(
+                itemCount: notes.length,
+                padding: const EdgeInsets.all(12),
+                itemBuilder: (context, index) {
+                  final note = notes[index];
+                  return GestureDetector(
+                    onTap: () {
+                      Navigator.pushNamed(
+                        context,
+                        '/editor',
+                        arguments: {'isEdit': true, 'note': note},
+                      ).then((_) {
+                        _refreshNotes();
+                      });
+                    },
+                    child: _buildNoteCard(note),
+                  );
+                },
+              ),
       ),
     );
   }
