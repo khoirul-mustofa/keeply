@@ -65,27 +65,6 @@ lib/
 
 ---
 
-## Cara Berkontribusi
-
-Kontribusi sangat terbuka bagi siapa pun yang ingin membantu pengembangan **Keeply**. Berikut langkah-langkahnya:
-
-1. Fork repository ini.
-2. Buat branch baru untuk fitur atau perbaikan Anda:
-
-   ```bash
-   git checkout -b fitur-baru-anda
-   ```
-3. Lakukan perubahan, lalu commit:
-
-   ```bash
-   git commit -m "Menambahkan fitur baru"
-   ```
-4. Push ke branch Anda dan buat pull request.
-
-Setiap kontribusi, besar maupun kecil, sangat berarti untuk pengembangan proyek ini.
-
----
-
 Dikembangkan oleh **Khoirul Mustofa** dengan tujuan membuat aplikasi catatan yang ringan, rapi, dan mudah digunakan.
 
 **Keeply — Catatan sederhana yang tetap ringan.**
