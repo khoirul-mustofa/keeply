@@ -62,9 +62,9 @@ lib/
 Berikut beberapa tampilan dari aplikasi **Keeply**:
 
 <p align="center">
-  <img src="https://github.com/khoirul-mustofa/keeply/assets/screenshots/home.png" width="280"/>
-  <img src="https://github.com/khoirul-mustofa/keeply/assets/screenshots/editor.png" width="280"/>
-  <img src="https://github.com/khoirul-mustofa/keeply/assets/screenshots/search.png" width="280"/>
+  <img src="https://github.com/khoirul-mustofa/keeply/blob/main/assets/screenshots/editor.jpg" width="280"/>
+  <img src="https://github.com/khoirul-mustofa/keeply/blob/main/assets/screenshots/home.jpg" width="280"/>
+  <img src="https://github.com/khoirul-mustofa/keeply/blob/main/assets/screenshots/search.jpg" width="280"/>
 </p>
 
 
