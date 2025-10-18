@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:keeply/models/note.dart';
 import 'package:keeply/services/hive_service.dart';
+import 'package:keeply/widgets/note_card_widget.dart';
 
 class KeepSearchPage extends StatefulWidget {
   const KeepSearchPage({super.key});
@@ -11,7 +12,6 @@ class KeepSearchPage extends StatefulWidget {
 
 class _KeepSearchPageState extends State<KeepSearchPage> {
   final TextEditingController _controller = TextEditingController();
-
   List<Note> notes = [];
 
   @override
@@ -42,16 +42,23 @@ class _KeepSearchPageState extends State<KeepSearchPage> {
   Widget build(BuildContext context) {
     final query = _controller.text.toLowerCase();
     final filteredNotes = notes.where((n) {
-      return n.title.toLowerCase().contains(query) ||
-          n.content
-              .map((c) => c.value)
-              .join('\n')
-              .toLowerCase()
-              .contains(query);
+      // Search in title
+      if (n.title.toLowerCase().contains(query)) return true;
+
+      // Search in content (both text value and checkbox label)
+      for (var content in n.content) {
+        if (content.type == 'text' && content.value != null) {
+          if (content.value!.toLowerCase().contains(query)) return true;
+        } else if (content.type == 'checkbox' && content.label != null) {
+          if (content.label!.toLowerCase().contains(query)) return true;
+        }
+      }
+
+      return false;
     }).toList();
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FA), // lembut abu keputihan
+      backgroundColor: const Color(0xFFF8F9FA),
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(64),
         child: SafeArea(
@@ -129,113 +136,25 @@ class _KeepSearchPageState extends State<KeepSearchPage> {
                 itemCount: filteredNotes.length,
                 itemBuilder: (context, i) {
                   final note = filteredNotes[i];
-                  return AnimatedContainer(
-                    duration: const Duration(milliseconds: 250),
-                    curve: Curves.easeOut,
-                    margin: const EdgeInsets.symmetric(vertical: 6),
-                    decoration: BoxDecoration(
-                      color: Color(int.parse(note.color)),
-                      borderRadius: BorderRadius.circular(14),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.05),
-                          blurRadius: 4,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    child: ListTile(
-                      onTap: () {
-                        Navigator.pushNamed(
-                          context,
-                          '/editor',
-                          arguments: {'isEdit': true, 'note': note},
-                        ).then((_) {
-                          _refreshNotes();
-                        });
-                      },
-
-                      title: RichText(
-                        text: highlightText(note.title, query, true),
-                      ),
-                      subtitle: Padding(
-                        padding: const EdgeInsets.only(top: 4),
-                        child: RichText(
-                          text: highlightText(
-                            note.content.map((c) => c.value).join('\n'),
-                            query,
-                            false,
-                          ),
-                        ),
-                      ),
-                    ),
+                  return NoteCardWidget(
+                    note: note,
+                    searchQuery: query,
+                    onTap: () {
+                      Navigator.pushNamed(
+                        context,
+                        '/editor',
+                        arguments: {'isEdit': true, 'note': note},
+                      ).then((_) {
+                        _refreshNotes();
+                      });
+                    },
+                    onLongPress: () {
+                      // Optional: Add delete dialog here if needed
+                    },
                   );
                 },
               ),
       ),
     );
-  }
-
-  TextSpan highlightText(String source, String query, bool isBold) {
-    if (query.isEmpty) {
-      return TextSpan(
-        text: source,
-        style: TextStyle(
-          color: Colors.black87,
-          fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
-        ),
-      );
-    }
-
-    final lowerSource = source.toLowerCase();
-    final lowerQuery = query.toLowerCase();
-
-    final matches = <TextSpan>[];
-    int start = 0;
-
-    while (true) {
-      final index = lowerSource.indexOf(lowerQuery, start);
-      if (index < 0) {
-        // tidak ada lagi yang cocok
-        matches.add(
-          TextSpan(
-            text: source.substring(start),
-            style: TextStyle(
-              color: Colors.black87,
-              fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
-            ),
-          ),
-        );
-        break;
-      }
-
-      // teks sebelum highlight
-      if (index > start) {
-        matches.add(
-          TextSpan(
-            text: source.substring(start, index),
-            style: TextStyle(
-              color: Colors.black87,
-              fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
-            ),
-          ),
-        );
-      }
-
-      // bagian highlight
-      matches.add(
-        TextSpan(
-          text: source.substring(index, index + query.length),
-          style: TextStyle(
-            color: Colors.amber,
-            fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
-          ),
-        ),
-      );
-
-      start = index + query.length;
-    }
-
-    return TextSpan(children: matches);
   }
 }
